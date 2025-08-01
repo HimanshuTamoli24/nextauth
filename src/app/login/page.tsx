@@ -3,6 +3,8 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { getErrorMessage } from '../../utils/error';
+import toast from "react-hot-toast";
 
 function Login() {
   const router = useRouter();
@@ -14,6 +16,15 @@ function Login() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    try {
+      const res = await axios.post("/api/user/login", user)
+      toast.success(res.data.message)
+      router.push("/")
+
+    } catch (error) {
+      toast.error(getErrorMessage(error))
+    }
 
   };
 

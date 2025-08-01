@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
-
+import { config } from "nextAuth/config/config";
 export const dbConnect = async () => {
+    if (mongoose.connection.readyState >= 1) return;
     try {
-        await mongoose.connect(process.env.MONGO_URI!);
+        await mongoose.connect(config.MONGODB_URI);
 
         const connection = mongoose.connection;
 

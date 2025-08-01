@@ -3,19 +3,27 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
+import toast from 'react-hot-toast';
+import { getErrorMessage } from 'nextAuth/utils/error';
 
 function Signup() {
+    const router = useRouter();
 
     const [user, setUser] = useState({
         username: "",
         email: "",
         password: "",
     })
-    const submibt = (e: React.FormEvent) => {
+    const submibt = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log(user);
-
-
+        try {
+            const res = await axios.post("/api/user/signup", user)
+            console.log(res);
+            toast.success(res.data.message)
+            router.push("/")
+        } catch (error: unknown) {
+            toast.error(getErrorMessage(error))
+        }
     }
 
     return (
@@ -37,9 +45,14 @@ function Signup() {
                         <label htmlFor="password">Password:</label>
                         <input type="password" id="password" name="password" required className='focus:outline-none' value={user.password} onChange={(e) => setUser({ ...user, password: e.target.value })} />
                     </div>
-                    <button className="border-b-4 hover:animate-pulse cursor-pointer border-r-4 border-l border-t   p-1.5 rounded-sm " type="submit">signup</button>
+                    <button
+                        type="submit"
+                        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py rounded transition-all duration-150"
+                    >
+                        Sign Up
+                    </button>
                 </form>
-                <Link  className="text-sm hover:text-blue-500/70" href="/login"> ------ Login ------</Link>
+                <Link className="text-sm hover:text-blue-500/70" href="/login"> ------ Login ------</Link>
             </div>
         </div>
     )
