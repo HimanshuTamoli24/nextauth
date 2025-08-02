@@ -2,6 +2,7 @@ import { dbConnect } from "nextAuth/DB/db";
 import { NextRequest, NextResponse } from "next/server";
 import User from "nextAuth/models/user.model";
 import bcrypt from "bcryptjs";
+import { sendMail } from "nextAuth/helper/mailer";
 dbConnect()
 
 type SignupRequestBody = {
@@ -23,14 +24,13 @@ export async function POST(request: NextRequest) {
         if (existUser) return NextResponse.json({ error: "User already exists" }, { status: 409 });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        console.log("hashed", hashedPassword);
-
         const newUser = await User.create({
             username,
             email,
             password: hashedPassword,
         });
 
+        sendMail("VERIFY", email, newUser._id.toString())
 
         return NextResponse.json({ message: "User created successfully", userId: newUser._id }, { status: 201 });
     } catch (error) {
