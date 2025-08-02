@@ -20,7 +20,7 @@ function Login() {
     try {
       const res = await axios.post("/api/user/login", user)
       toast.success(res.data.message)
-      router.push("/")
+      router.push("/profile")
 
     } catch (error) {
       toast.error(getErrorMessage(error))
